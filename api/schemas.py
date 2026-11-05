@@ -9,3 +9,9 @@ class SQLQueryResponse(BaseModel):
     question: str
     sql: str
     answer: str
+
+
+class FileQueryResponse(BaseModel):
+    filename: str
+    question: str
+    answer: str
