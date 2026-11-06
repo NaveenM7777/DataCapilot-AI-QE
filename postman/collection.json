@@ -1,0 +1,136 @@
+{
+  "info": {
+    "name": "DataCapilot-AI API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Body status is ok', function () { pm.expect(pm.response.json().status).to.eql('ok'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{base_url}}/health", "host": ["{{base_url}}"], "path": ["health"] }
+      }
+    },
+    {
+      "name": "SQL query - valid question",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Has question, sql and answer', function () {",
+              "  var body = pm.response.json();",
+              "  pm.expect(body).to.have.property('question');",
+              "  pm.expect(body).to.have.property('sql');",
+              "  pm.expect(body).to.have.property('answer');",
+              "});",
+              "pm.test('Responds in under 5000 ms', function () { pm.expect(pm.response.responseTime).to.be.below(5000); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"question\": \"How many customers do we have?\"\n}"
+        },
+        "url": { "raw": "{{base_url}}/sql/query", "host": ["{{base_url}}"], "path": ["sql", "query"] }
+      }
+    },
+    {
+      "name": "SQL query - empty question (expect 422)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 422', function () { pm.response.to.have.status(422); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"question\": \"\"\n}" },
+        "url": { "raw": "{{base_url}}/sql/query", "host": ["{{base_url}}"], "path": ["sql", "query"] }
+      }
+    },
+    {
+      "name": "Excel analyze - valid file",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Has filename and answer', function () {",
+              "  var body = pm.response.json();",
+              "  pm.expect(body).to.have.property('filename');",
+              "  pm.expect(body).to.have.property('answer');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "file", "type": "file", "src": [] },
+            { "key": "question", "value": "What is the total?", "type": "text" }
+          ]
+        },
+        "url": { "raw": "{{base_url}}/excel/analyze", "host": ["{{base_url}}"], "path": ["excel", "analyze"] }
+      }
+    },
+    {
+      "name": "PDF ask - valid file",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Has answer', function () { pm.expect(pm.response.json()).to.have.property('answer'); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "file", "type": "file", "src": [] },
+            { "key": "question", "value": "What is the refund window?", "type": "text" }
+          ]
+        },
+        "url": { "raw": "{{base_url}}/pdf/ask", "host": ["{{base_url}}"], "path": ["pdf", "ask"] }
+      }
+    }
+  ]
+}
